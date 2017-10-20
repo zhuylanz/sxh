@@ -1,0 +1,119 @@
+<?php
+session_start();
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>SanXeHot Input Interface</title>
+</head>
+<body>
+  <div id="fb-root"></div>
+  <script>
+
+  var app_id = '1624732407577268';
+  var app_scope = 'public_profile,email,user_likes,user_posts,publish_actions,user_photos,manage_pages,publish_pages,read_page_mailboxes,pages_show_list,pages_manage_cta,pages_manage_instant_articles,ads_management,ads_read,user_managed_groups';
+  var app_uri = 'http://localhost/server-html/graph-api/sanxehot';
+
+  (function(d, s, id){
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : app_id,
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v2.10'
+    });
+
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+
+  };
+
+
+
+  function statusChangeCallback(response) {
+    console.log('statusChangeCallback');
+    console.log(response);
+
+    if (response.status === 'connected') {
+
+      alert('đã login lalala ');
+      var token = response.authResponse.accessToken;
+      var timeleft = response.authResponse.expiresIn;
+      var unknown = response.authResponse.signedRequest;
+      var userid = response.authResponse.userID;
+
+      document.getElementById('status').innerHTML = 'connected';
+      document.getElementById('1').innerHTML = 'token ' + token;
+      document.getElementById('2').innerHTML = 'timeleft ' + timeleft;
+      document.getElementById('3').innerHTML = 'unknown ' + unknown;
+      document.getElementById('4').innerHTML = 'id ' + userid;
+
+      document.getElementById('user_submit1').setAttribute('value', userid);
+      document.getElementById('user_submit2').setAttribute('value', token);
+      document.getElementById('user_submit3').setAttribute('value', timeleft);
+
+
+    } else {
+
+      document.getElementById('status').innerHTML = 'Please log ' +
+      'into this app.';
+      alert('Chưa đăng nhập');
+    }
+  }
+
+
+  function RequestLoginFB() {
+    window.location = 'http://graph.facebook.com/oauth/authorize?client_id=' + app_id + '&scope=' + app_scope + '&redirect_uri=' + app_uri;
+  }
+
+
+  function test() {
+    var body = 'Reading JS SDK documentation';
+    FB.api('/me/feed?access_token='+ token, 'post', {'message': body}, function(response) {
+      if (!response || response.error) {
+        alert('Error occured' + response.error);
+      } else {
+        alert('Post ID: ' + response.id);
+      }
+    }
+  );
+}
+
+
+function submitform(){
+  document.forms["user_submitform"].submit();
+}
+</script>
+<p id="status">status</p>
+<p id="1">token</p>
+<p id="2">timeleft</p>
+<p id="3">other</p>
+<p id="4">id</p>
+<p id="abc">testing</p>
+
+<input type="button" value="ĐĂNG NHẬP" onclick="RequestLoginFB()"/>
+<input type="button" value="Post bài" onclick="test()"/>
+<input type="button" value="submit" onclick="submitform()"/>
+
+<form name='user_submitform' target="_blank" action="config.php" method="get" hidden="true">
+  <input id="user_submit1" type="text" name="user_id" value="">
+  <input id="user_submit2" type="text" name="user_token" value="">
+  <input id="user_submit3" type="text" name="user_expire" value="">
+
+  <input type="submit" value="submit đi">
+</form>
+
+</body>
+</html>
+
